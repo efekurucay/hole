@@ -1,0 +1,20 @@
+name: Build and test
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build universal app and disk image
+        run: ./scripts/build.sh release
+      - name: Run read-only self-test
+        run: build/Hole.app/Contents/MacOS/Hole --self-test
+      - name: Verify disk image
+        run: hdiutil verify build/Hole.dmg
